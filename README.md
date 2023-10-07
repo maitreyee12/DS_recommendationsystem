@@ -4,6 +4,16 @@ executing data science theory by building product recommendation system in pytho
 to run this project install all necessary dependancies and run following command
 python manage.py runserver
 
+
+for git 
+
+Create a new GitHub repo that contains a README file.
+Use Git to clone the GitHub repo locally.
+Copy your project files into the folder created by the clone.
+Perform a git add . and a git commit.
+Push your changes up to GitHub.
+
+
 *** Important information ***
 Collaborative filtering is a popular technique used in recommendation systems to provide personalized recommendations to users. It relies on the collective behavior and preferences of a group of users to make recommendations. Collaborative filtering methods assume that users who agreed in the past will agree again in the future, and they identify patterns in user behavior to recommend items that similar users have liked or interacted with.
 
