@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load cart %}
+{% load custom_filter %}
+{% load static %}
+<style>
+
+    
+    .rate {
+        float:right;
+        height: 36px;
+        padding: 0 10px;
+    }
+    .rate:not(:checked) > input {
+        position:absolute;
+        top:-9999px;
+    }
+    .rate:not(:checked) > label {
+        float:right;
+        width:1em;
+        overflow:hidden;
+        white-space:nowrap;
+        cursor:pointer;
+        font-size:30px;
+        color:#ccc;
+    }
+    .rate:not(:checked) > label:before {
+        content: '★ ';
+    }
+    .rate > input:checked ~ label {
+        color: #ffc700;    
+    }
+    .rate:not(:checked) > label:hover,
+    .rate:not(:checked) > label:hover ~ label {
+        color: #deb217;  
+    }
+    .rate > input:checked + label:hover,
+    .rate > input:checked + label:hover ~ label,
+    .rate > input:checked ~ label:hover,
+    .rate > input:checked ~ label:hover ~ label,
+    .rate > label:hover ~ input:checked ~ label {
+        color: #c59b08;
+    }
+    
+      /* Style for the button that looks like a link */
+  .link-button {
+    background: none;
+    border: none;
+    color: rgb(71, 71, 223);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  /* Remove default button styling */
+  .link-button:focus,
+  .link-button:hover {
+    outline: none;
+  }
+    .transparent-button {
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    float:left;
+    height: 36px;
+    padding: 0 10px;
+  }
+</style>
+<div class="container">
+  <!-- <h1>Data: {{ orderinfo.name }}</h1>
+  <h1>Data: {{ orderinfo.price }}</h1>
+  <h1>Data: {{ orderinfo.quantity }}</h1>
+  <h1>Data: {{ orderinfo.image }}</h1> -->
+
+  <main class="pt-5">
+    <a href="/orders" type="button" class="link-button">Back</a>
+    <div class="row g-3">
+     
+
+        <div class="col-md-5 col-lg-5 order-md-first">
+            <img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image" src="{{ orderinfo.image}}">
+        </div>
+        <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
+            <h1 class="mb-0 h4">{{ orderinfo.name }}</h1>
+            <!-- <p><span class="lead">{{ product.author }}</span> (Author)</p> -->
+            <p>{{ orderinfo.desc|slice:":355" }}...</p>
+            <div class="border">
+                <div class="col border-bottom">
+                    <div class="row p-3">
+                        <div class="col-6">Price {{ orderinfo.price |currency }}</div>
+                        <!-- <div class="col-6 text-end"><span class="h4 fw-bold">{{ orderinfo.price |currency }}</span></div> -->
+                        <div class="col-6 text-end"> <span class="h4 fw-bold">Total :{{ orderinfo.quantity|multiply:orderinfo.price|currency }}</span></div>
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row p-3">
+                        <div class="col-6">
+                            <label for="select">Quantity : {{orderinfo.quantity}}</label>
+                            <!-- <label for="select">Total : {{orderinfo.quantity|multiply:orderinfo.price|currency}}</label> -->
+                          
+
+                        </div>
+                        <div class="col-6 text-end">
+<button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Add to Favourite</button></div>
+<!-- <input hidden type="text" id="orderinfo" name="orderinfo" value="{{orderinfo.prod_id}}" /> -->
+                    </div>
+                </div>
+                <div class="col border-bottom">
+                  <div class="row p-3">
+                      <div class="col-6">Ratings</div>
+                      <!-- <div class="col-6 text-end"><span class="h4 fw-bold">{{ orderinfo.price |currency }}</span></div> -->
+                       <div class="col-6 text-end"> 
+                        <form action="/order_details" method="POST">
+                          {% csrf_token %}
+                          
+                            <div class="rate">
+                                <input hidden type="text" id="order_id" name="orderid" value="{{orderinfo.order_id}}" />
+                                <input hidden type="text" id="order_id" name="prod_id" value="{{orderinfo.prod_id}}" />
+
+                                <input hidden type="text" id="orderinfo" name="orderinfo" value="{{orderinfo}}" />
+                                <!-- {% if orderinfo.ratings %}
+                                    <p>Ratings: {{ orderinfo.ratings }}</p>
+                                {% else %}
+                                    <p>No ratings available for this order.</p>
+                                {% endif %} -->
+
+                                {% for value in "54321" %} {# Represents the possible ratings 5 to 1 #}
+                                    <input
+                                        type="radio"
+                                        id="star{{ value }}"
+                                        name="rate"
+                                        value="{{ value }}"
+                                        {% if value == orderinfo.ratings|stringformat:"s" %} checked {% endif %}
+                                    />
+                                    <label for="star{{ value }}" title="{{ value }} stars">{{ value }} stars</label>
+                                {% endfor %}
+                                <!-- <input type="radio" id="star5" name="rate" value="5" />
+                                <label for="star5" title="text">5 stars</label>
+                                <input type="radio" id="star4" name="rate" value="4" />
+                                <label for="star4" title="text">4 stars</label>
+                                <input type="radio" id="star3" name="rate" value="3" />
+                                <label for="star3" title="text">3 stars</label>
+                                <input type="radio" id="star2" name="rate" value="2" />
+                                <label for="star2" title="text">2 stars</label>
+                                <input type="radio" id="star1" name="rate" value="1" />
+                                <label for="star1" title="text">1 star</label> -->
+                              </div>
+                              <button type="submit" class="btn btn-primary">submit</button>
+                            </form>
+                            </div>
+                         </div>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</main>
+  
+</div>
+
+
+
+
+
+{% endblock %}

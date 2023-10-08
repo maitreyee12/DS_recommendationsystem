@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load cart %}
+{% load custom_filter %}
+{% load static %}
+<style>
+
+    
+    .rate {
+        float:right;
+        height: 36px;
+        padding: 0 10px;
+    }
+    .rate:not(:checked) > input {
+        position:absolute;
+        top:-9999px;
+    }
+    .rate:not(:checked) > label {
+        float:right;
+        width:1em;
+        overflow:hidden;
+        white-space:nowrap;
+        cursor:pointer;
+        font-size:30px;
+        color:#ccc;
+    }
+    .rate:not(:checked) > label:before {
+        content: '★ ';
+    }
+    .rate > input:checked ~ label {
+        color: #ffc700;    
+    }
+    .rate:not(:checked) > label:hover,
+    .rate:not(:checked) > label:hover ~ label {
+        color: #deb217;  
+    }
+    .rate > input:checked + label:hover,
+    .rate > input:checked + label:hover ~ label,
+    .rate > input:checked ~ label:hover,
+    .rate > input:checked ~ label:hover ~ label,
+    .rate > label:hover ~ input:checked ~ label {
+        color: #c59b08;
+    }
+    
+      /* Style for the button that looks like a link */
+  .link-button {
+    background: none;
+    border: none;
+    color: rgb(71, 71, 223);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  /* Remove default button styling */
+  .link-button:focus,
+  .link-button:hover {
+    outline: none;
+  }
+    .transparent-button {
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    float:left;
+    height: 36px;
+    padding: 0 10px;
+  }
+</style>
+<div class="container">
+  <!-- <h1>Data: {{ orderinfo.name }}</h1>
+  <h1>Data: {{ orderinfo.price }}</h1>
+  <h1>Data: {{ orderinfo.quantity }}</h1>
+  <h1>Data: {{ orderinfo.image }}</h1> -->
+
+  <main class="pt-5">
+    <a href="/store" type="button" class="link-button">Back</a>
+    <div class="row g-3">
+     
+        {% if product %}
+        <div class="col-md-5 col-lg-5 order-md-first">
+            <img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image" src="{{ product.image.url}}">
+        </div>
+        <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
+            <h1 class="mb-0 h4">{{ product.name }}</h1>
+            <!-- <p><span class="lead">{{ product.author }}</span> (Author)</p> -->
+            <p>{{ product.desc|slice:":355" }}...</p>
+            <div class="border">
+                <div class="col border-bottom">
+                    <div class="row p-3">
+                        <div class="col-6">Price {{ product.price |currency }}</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row p-3">
+                        <div class="col-6">
+                            <label for="select">Category : {{product.category}}</label>                          
+
+                        </div>
+                        <div class="col-6 text-end">
+<button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Add to Favourite</button></div>
+                    </div>
+                </div>
+                
+              </div>
+            </div>
+
+            <!-- Recommended products based on selected product -->
+            <div class="border rounded p-4 m-4">
+               
+                <p>Content Based - Recommended Products</p>
+                <hr>
+                {% if rec_prods %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Sno.</th>
+                            <th>Image</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        {% for product in rec_prods %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td><img style="height: 80px;" class="rounded-circle" src="{{product.image.url}}" alt=""></td>
+                            <td>{{product.name}}</td>
+                            <td>{{product.price|currency}}</td>
+                           
+                        </tr>
+        
+                        {% endfor %}
+                       
+                    </tbody>
+        
+                    <!-- <tfoot>
+                        <tr>
+                            <th colspan="4"></th>
+                            <th class="" colspan="">Total</th>
+                            <th>{{products|total_cart_price:request.session.cart|currency}}</th>
+                        </tr>
+                    </tfoot> -->
+                </table>
+                {% endif %}
+                <hr>
+               
+           </div>
+            {% endif %}
+        </div>
+    </div>
+</main>
+  
+</div>
+
+
+
+
+
+{% endblock %}

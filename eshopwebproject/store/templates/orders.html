@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load cart %}
+{% load custom_filter %}
+{% load static %}
+<style>
+
+    
+    .rate {
+        float:right;
+        height: 36px;
+        padding: 0 10px;
+    }
+    .rate:not(:checked) > input {
+        position:absolute;
+        top:-9999px;
+    }
+    .rate:not(:checked) > label {
+        float:right;
+        width:1em;
+        overflow:hidden;
+        white-space:nowrap;
+        cursor:pointer;
+        font-size:30px;
+        color:#ccc;
+    }
+    .rate:not(:checked) > label:before {
+        content: '★ ';
+    }
+    .rate > input:checked ~ label {
+        color: #ffc700;    
+    }
+    .rate:not(:checked) > label:hover,
+    .rate:not(:checked) > label:hover ~ label {
+        color: #deb217;  
+    }
+    .rate > input:checked + label:hover,
+    .rate > input:checked + label:hover ~ label,
+    .rate > input:checked ~ label:hover,
+    .rate > input:checked ~ label:hover ~ label,
+    .rate > label:hover ~ input:checked ~ label {
+        color: #c59b08;
+    }
+    
+      /* Style for the button that looks like a link */
+  .link-button {
+    background: none;
+    border: none;
+    color: rgb(71, 71, 223);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  /* Remove default button styling */
+  .link-button:focus,
+  .link-button:hover {
+    outline: none;
+  }
+    .transparent-button {
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    float:left;
+    height: 36px;
+    padding: 0 10px;
+  }
+</style>
+<div class="container">
+   <div class="border rounded p-4 m-4">
+        <p class="display-4 pl-4 ml-4">Your Orders</p>
+        <hr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Sno.</th>
+                    <th>Image</th>
+                    <th>Product</th>
+                    <th>Date</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for order in orders_with_ratings %}
+                <tr>
+                    <form action="/order_details" method="POST">
+                    <td>{{forloop.counter}}</td>
+                    <input hidden type="text" name='orderid' value='{{order.order_number}}'>
+                    <input hidden type="text" name='prod_id' value='{{order.product_id}}'>
+                    <td><img name='product_img' style="height: 80px;" class="rounded-circle" src="{{order.product_img.url}}" alt=""></td>
+                    <td name='product_name'>{{order.product_name}}</td>
+                    <td name='product_date'>{{order.product_date}}</td>
+                    <td>{{order.price|currency}}</td>
+                    <td>{{order.quantity}}</td>
+                    <td>{{order.quantity|multiply:order.price|currency}}</td>
+                    {% if order.status %}
+                    <td><small class="badge badge-success">Completed</small>
+                        <div class="rate">
+                            {% for value in "54321" %} {# Represents the possible ratings 5 to 1 #}
+                                <input
+                                    type="radio"
+                                    id="star{{ value }}-order{{ order.order_number }}"
+                                    name="rate-order{{ order.order_number }}"
+                                    value="{{ value }}"
+                                    {% if value == order.ratings.0|stringformat:"s" %} checked {% endif %}
+                                    {% if value > order.ratings.0 %} disabled {% endif %}
+                                    disabled />
+                                <label for="star{{ value }}-order{{ order.order_number }}" title="{{ value }} stars">{{ value }} stars</label>
+                            {% endfor %}
+
+                            {% comment %} {% for rating in order.ratings %}
+                                <span class="star" title="{{ rating }} stars">{{ rating }} stars</span>
+                            {% endfor %} {% endcomment %}
+                        </div>
+                        {% comment %} <div class="rate">
+                            {% for value in "54321" %} {# Represents the possible ratings 5 to 1 #}
+                            <input
+                                type="radio"
+                                id="star{{ value }}"
+                                name="rate"
+                                value="{{ value }}"
+                                {% if value == order.ratings|stringformat:"s" %} checked {% endif %}
+                            />
+                            <label for="star{{ value }}" title="{{ value }} stars">{{ value }} stars</label>
+                        {% endfor %}
+                            </div> {% endcomment %}
+                    
+                    </td>
+                    {% comment %} <td><small class="badge badge-success">{{order.ratings}}</small></td> {% endcomment %}
+                    
+                    <td>
+                       
+                            {% csrf_token %}
+                            <small> <button type="submit" name="orderdetailsbtn" class="link-button"> order details </button></small>
+                            
+                        </form>
+                       
+                        <!-- <small><a href="#" data-toggle="modal" data-target="#FeedbackModal">Share Feedback</a></small> -->
+                            <!-- <button name="givefeedbackbtn" class="link-button"> share feedback </button> -->
+                    </td>
+                    {%else%}
+                    <td><small class="badge badge-warning">Pending</small></td>
+                    {% endif %}
+                    <td>
+                        
+                    </td>
+                </tr>
+
+                {% endfor %}
+               
+            </tbody>
+
+        </table>
+       
+   </div>
+     <!-- Modal -->
+  
+</div>
+
+
+
+
+
+{% endblock %}
